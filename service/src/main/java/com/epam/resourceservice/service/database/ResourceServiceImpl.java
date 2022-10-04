@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static com.amazonaws.services.mediaconvert.model.AudioCodec.MP3;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author www.epam.com
@@ -56,10 +57,10 @@ public class ResourceServiceImpl implements ResourceService {
     public MultipleResourceDto deleteResources(final List<Integer> ids) {
         var resources = ids.stream()
                 .map(id -> repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Resource with id = " + id + " doesn't exist")))
-                .toList();
+                .collect(toList());
         resources.forEach(this::deleteResource);
         var response = new MultipleResourceDto();
-        response.setIds(resources.stream().map(Resource::getId).toList());
+        response.setIds(resources.stream().map(Resource::getId).collect(toList()));
         publisher.publishDeleteEvent(response.getIds().toString());
         return response;
     }

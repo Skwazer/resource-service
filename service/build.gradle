@@ -11,13 +11,13 @@ jar {
 }
 
 dependencies {
+    api 'com.epam.song-service:client:0.0.1'
+    api 'com.epam.song-service:interface:0.0.1'
     implementation project(':repository')
     api 'com.amazonaws:aws-java-sdk:1.12.238'
     implementation 'commons-io:commons-io:2.11.0'
     implementation 'com.googlecode.soundlibs:mp3spi:1.9.5-1'
     api 'org.springframework.boot:spring-boot-starter-amqp'
-    api 'com.epam.songservice:client:0.0.1'
-    api 'com.epam.songservice:interface:0.0.1'
     implementation 'org.springframework.retry:spring-retry'
     implementation 'org.springframework:spring-aspects'
 }
