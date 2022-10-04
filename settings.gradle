@@ -1,0 +1,5 @@
+rootProject.name = 'resource-service'
+include 'web'
+include 'service'
+include 'repository'
+include 'client'
