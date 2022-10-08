@@ -9,9 +9,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
-/**
- * @author www.epam.com
- */
+
 @Service
 @Slf4j
 @RequiredArgsConstructor

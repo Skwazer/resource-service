@@ -5,9 +5,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-/**
- * @author www.epam.com
- */
+
 @Data
 public class ErrorResponse {
     private String error;

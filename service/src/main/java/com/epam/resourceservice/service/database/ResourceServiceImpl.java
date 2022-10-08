@@ -22,9 +22,7 @@ import java.util.List;
 import static com.amazonaws.services.mediaconvert.model.AudioCodec.MP3;
 import static java.util.stream.Collectors.toList;
 
-/**
- * @author www.epam.com
- */
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -43,6 +41,7 @@ public class ResourceServiceImpl implements ResourceService {
         var resourceEntity = new Resource();
         resourceEntity.setLocation(filePath);
         var resourceId = repository.save(resourceEntity).getId();
+        log.info("File {} was saved to DB", resource.getName());
         publisher.publishCreationEvent(resourceId.toString());
         return resourceId;
     }

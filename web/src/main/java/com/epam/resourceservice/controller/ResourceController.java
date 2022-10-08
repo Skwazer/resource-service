@@ -21,9 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-/**
- * @author www.epam.com
- */
+
 @Validated
 @RestController
 @RequestMapping("/resources")

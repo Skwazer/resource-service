@@ -5,9 +5,7 @@ import lombok.ToString;
 
 import java.util.List;
 
-/**
- * @author www.epam.com
- */
+
 @Data
 @ToString
 public class MultipleResourceDto {

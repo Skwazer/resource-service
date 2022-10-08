@@ -4,9 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 
-/**
- * @author www.epam.com
- */
+
 @Entity
 @Table(name = "resources")
 @Data

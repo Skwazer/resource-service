@@ -4,15 +4,18 @@ security:
   basic:
     enable: false
 aws:
-  region: us-east-1
+  region: us-west-1
+  credentials:
+    access-key: test
+    secret-key: test
   s3:
-    bucket: resources
+    bucket: resource-bucket
     endpoint: http://127.0.0.1:4566
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/resources
-    username:
-    password:
+    url: jdbc:postgresql://localhost:5432/microservices
+    username: postgres
+    password: postgres
   rabbitmq:
     host: localhost
     port: 5672

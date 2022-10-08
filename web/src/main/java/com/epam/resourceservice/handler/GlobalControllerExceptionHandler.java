@@ -19,9 +19,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author www.epam.com
- */
+
 @RestControllerAdvice
 public class GlobalControllerExceptionHandler {
 

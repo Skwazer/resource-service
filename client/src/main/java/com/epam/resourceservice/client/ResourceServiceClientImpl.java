@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-/**
- * @author www.epam.com
- */
+
 @RequiredArgsConstructor
 public class ResourceServiceClientImpl implements ResourceServiceClient{
 

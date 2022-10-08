@@ -8,9 +8,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 
-/**
- * @author www.epam.com
- */
+
 @Configuration
 public class ClientConfig {
 
