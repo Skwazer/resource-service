@@ -1,43 +1,58 @@
 plugins {
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'org.springframework.boot' version '2.7.0'
-	id 'maven-publish'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot' version '2.7.0'
+    id 'maven-publish'
 }
 
 
 subprojects {
-	apply plugin: 'java-library'
-	apply plugin: 'io.spring.dependency-management'
-	apply plugin: 'org.springframework.boot'
-	apply plugin: 'maven-publish'
+    apply plugin: 'java-library'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'maven-publish'
 
-	group = 'com.epam.resource-service'
-	version = '0.0.1-SNAPSHOT'
-	sourceCompatibility = JavaVersion.VERSION_11
-	targetCompatibility = JavaVersion.VERSION_11
+    group = 'com.epam.resource-service'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 
-	repositories {
-		mavenCentral()
-		mavenLocal()
-	}
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
 
-	dependencies {
-		compileOnly 'org.projectlombok:lombok:1.18.24'
-		annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.24'
+        annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
-		testCompileOnly 'org.projectlombok:lombok:1.18.24'
-		testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+        testCompileOnly 'org.projectlombok:lombok:1.18.24'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 
-		implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation platform('org.testcontainers:testcontainers-bom:1.17.5')
 
-		testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	}
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
+        testImplementation 'org.mockito:mockito-junit-jupiter:4.8.1'
+        testImplementation 'org.testcontainers:rabbitmq:1.17.5'
+        testImplementation 'org.testcontainers:junit-jupiter:1.17.5'
+    }
 
-	tasks.named('test') {
-		useJUnitPlatform()
-	}
+    ext {
+        set('springCloudVersion', "2021.0.4")
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
 }
 
 springBoot {
-	mainClass = 'com.epam.resourceservice.ResourceServiceApplication'
+    mainClass = 'com.epam.resourceservice.ResourceServiceApplication'
 }

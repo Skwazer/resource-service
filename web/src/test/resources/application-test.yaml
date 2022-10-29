@@ -14,6 +14,9 @@ aws:
 spring:
   application:
     name: resource-service
+  cloud:
+    discovery:
+      enabled: false
   datasource:
     url: jdbc:postgresql://localhost:5432/microservices
     username: postgres
@@ -43,9 +46,3 @@ song:
       timeout: 2000
     baseUrl: http://localhost:8088/songs
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka
-    instance:
-    preferIpAddress: true

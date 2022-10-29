@@ -34,7 +34,7 @@ public class ResourceServiceImpl implements ResourceService {
     private final SongService songService;
 
     public int upload(MultipartFile resource) {
-        if(!validateIfMp3(resource)) {
+        if (!validateIfMp3(resource)) {
             throw new NotMp3FileException("Provided resource is not of .mp3 format");
         }
         var filePath = fileUploadService.uploadFile(resource);
@@ -77,6 +77,6 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     private boolean validateIfMp3(final MultipartFile resource) {
-       return MP3.toString().equalsIgnoreCase(FilenameUtils.getExtension(resource.getResource().getFilename()));
+        return MP3.toString().equalsIgnoreCase(FilenameUtils.getExtension(resource.getResource().getFilename()));
     }
 }

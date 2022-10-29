@@ -9,7 +9,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 
 @RequiredArgsConstructor
-public class ResourceServiceClientImpl implements ResourceServiceClient{
+public class ResourceServiceClientImpl implements ResourceServiceClient {
 
     @Value("${resource.service.baseUrl}")
     private String baseUrl;

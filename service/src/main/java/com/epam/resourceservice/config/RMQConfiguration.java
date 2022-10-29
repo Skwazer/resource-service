@@ -8,12 +8,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RMQConfiguration {
+
     @Value("${spring.rabbitmq.queue.create}")
     private String createQueue;
 
     @Value("${spring.rabbitmq.queue.delete}")
     private String deleteQueue;
-
 
     @Bean
     public Queue createQueue() {
