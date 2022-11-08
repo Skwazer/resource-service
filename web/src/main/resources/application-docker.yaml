@@ -1,0 +1,56 @@
+server:
+  port: 8087
+security:
+  basic:
+    enable: false
+aws:
+  region: us-west-1
+  credentials:
+    access-key: test
+    secret-key: test
+  s3:
+    bucket: resource-bucket
+    endpoint: http://localstack:4566
+spring:
+  application:
+    name: resource-service
+  datasource:
+    url: jdbc:postgresql://postgresql:5432/microservices
+    username: postgres
+    password: postgres
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+    queue:
+      create: Resources.Create
+      create_dead: Resources.Create.Dead
+      delete: Resources.Delete
+      delete_dead: Resources.Delete.Dead
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+    hibernate:
+      ddl-auto: update
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+song:
+  service:
+    connect:
+      timeout: 2000
+    read:
+      timeout: 2000
+    baseUrl: http://song-service:8088/songs
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka:8761/eureka
+    instance:
+    preferIpAddress: true

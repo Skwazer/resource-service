@@ -1,0 +1,100 @@
+services:
+
+  # external images
+  postgresql:
+    container_name: postgresql
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=microservices
+
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    environment:
+      AWS_DEFAULT_REGION: us-west-1
+      HOSTNAME: localstack
+      HOSTNAME_EXTERNAL: localstack
+      EDGE_PORT: 4566
+      SERVICES: s3
+      AWS_ACCESS_KEY_ID: "test"
+      AWS_SECRET_ACCESS_KEY: "test"
+    ports:
+      - '4566-4583:4566-4583'
+    volumes:
+      - ./awslocal-init-scripts:/docker-entrypoint-initaws.d
+      - "${TEMPDIR:-/tmp/localstack}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+
+  # local images
+  gateway:
+    container_name: spring-gateway
+    image: spring-gateway-img
+    build: ../spring-gateway/
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka
+
+  eureka:
+    image: eureka-service-img
+    container_name: eureka
+    build: ../eureka-service/
+    ports:
+      - "8761:8761"
+
+  resource-service:
+    container_name: resource-service
+    image: resource-service-img
+    build: .
+    ports:
+      - "8087:8087"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka
+      - localstack
+      - rabbitmq
+      - postgresql
+
+  song-service:
+    container_name: song-service
+    image: song-service-img
+    build: ../song-service/
+    ports:
+      - "8088:8088"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka
+      - postgresql
+
+  resource-processor:
+    container_name: resource-processor
+    image: resource-processor-img
+    build: ../resource-processor/
+    ports:
+      - "8086:8086"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka
+      - rabbitmq
+      - song-service
+
+  
