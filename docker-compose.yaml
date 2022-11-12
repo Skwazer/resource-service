@@ -5,7 +5,7 @@ services:
     container_name: postgresql
     image: postgres
     ports:
-      - "5432:5432"
+      - "5555:5432"
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
@@ -96,5 +96,18 @@ services:
       - eureka
       - rabbitmq
       - song-service
+
+  storage-service:
+    container_name: storage-service
+    image: storage-service-img
+    build: ../storage-service/
+    ports:
+      - "8089:8089"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka
+      - localstack
+      - postgresql
 
   
