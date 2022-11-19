@@ -17,4 +17,5 @@ public class Resource {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String location;
+    private String storageId;
 }

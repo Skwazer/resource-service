@@ -48,9 +48,16 @@ song:
       timeout: 2000
     baseUrl: http://song-service:8088/songs
 
+storage-service:
+  baseUrl: http://storage-service:8089/storages
+  storages:
+    staging: staging-storage
+    permanent: permanent-storage
+
 eureka:
   client:
     serviceUrl:
       defaultZone: http://eureka:8761/eureka
     instance:
     preferIpAddress: true
+

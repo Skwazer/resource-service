@@ -61,7 +61,7 @@ class ResourceServiceIntegrationTest {
         resource.setLocation(path);
         resource.setId(expectedId);
 
-        when(fileUploadService.uploadFile(file)).thenReturn(path);
+        when(fileUploadService.uploadFileToStaging(file)).thenReturn(resource);
         when(repository.save(any(Resource.class))).thenReturn(resource);
 
         resourceService.upload(file);

@@ -3,7 +3,8 @@ package com.epam.resourceservice.controller;
 import com.epam.resourceservice.dto.MultipleResourceDto;
 import com.epam.resourceservice.dto.Resource;
 import com.epam.resourceservice.service.database.ResourceServiceImpl;
-import com.epam.songservice.dto.SongMetadataDto;
+import com.netflix.appinfo.InstanceInfo;
+import com.netflix.discovery.EurekaClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -29,6 +31,7 @@ import java.util.List;
 public class ResourceController {
 
     private final ResourceServiceImpl resourceServiceImpl;
+    EurekaClient eurekaClient;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -46,10 +49,9 @@ public class ResourceController {
                 .body(new ByteArrayResource(resource));
     }
 
-    @GetMapping("/{id}/metadata")
-    @ResponseStatus(HttpStatus.OK)
-    public SongMetadataDto findResourceMetadata(@PathVariable("id") Integer id) {
-        return resourceServiceImpl.findSongMetadata(id);
+    @PutMapping("/{id}")
+    public Resource moveToPermanentStorage(@PathVariable("id") Integer id) {
+        return new Resource(resourceServiceImpl.moveToPermanentStorage(id));
     }
 
     @DeleteMapping()

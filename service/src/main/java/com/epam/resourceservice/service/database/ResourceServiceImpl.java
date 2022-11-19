@@ -1,14 +1,14 @@
 package com.epam.resourceservice.service.database;
 
 import com.epam.resourceservice.dto.MultipleResourceDto;
+import com.epam.resourceservice.dto.StorageDto;
 import com.epam.resourceservice.exception.NotMp3FileException;
 import com.epam.resourceservice.exception.ResourceNotFoundException;
 import com.epam.resourceservice.model.Resource;
 import com.epam.resourceservice.publisher.RMQPublisher;
 import com.epam.resourceservice.repository.ResourceRepository;
-import com.epam.resourceservice.service.SongService;
+import com.epam.resourceservice.service.StorageServiceClient;
 import com.epam.resourceservice.service.s3.FileUploadService;
-import com.epam.songservice.dto.SongMetadataDto;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -31,15 +31,13 @@ public class ResourceServiceImpl implements ResourceService {
     private final FileUploadService fileUploadService;
     private final ResourceRepository repository;
     private final RMQPublisher publisher;
-    private final SongService songService;
+    private final StorageServiceClient storageServiceClient;
 
     public int upload(MultipartFile resource) {
         if (!validateIfMp3(resource)) {
             throw new NotMp3FileException("Provided resource is not of .mp3 format");
         }
-        var filePath = fileUploadService.uploadFile(resource);
-        var resourceEntity = new Resource();
-        resourceEntity.setLocation(filePath);
+        Resource resourceEntity = fileUploadService.uploadFileToStaging(resource);
         var resourceId = repository.save(resourceEntity).getId();
         log.info("File {} was saved to DB", resource.getName());
         publisher.publishCreationEvent(resourceId.toString());
@@ -48,8 +46,9 @@ public class ResourceServiceImpl implements ResourceService {
 
     @SneakyThrows
     public byte[] findResource(int id) {
-        var filePath = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource with id = " + id + " not found")).getLocation();
-        return fileUploadService.findFile(filePath);
+        Resource resource = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource with id = " + id + " not found"));
+        StorageDto storage = storageServiceClient.findStorage(resource.getStorageId());
+        return fileUploadService.findFile(resource.getLocation(), storage.getBucketName());
     }
 
     @Transactional
@@ -64,19 +63,23 @@ public class ResourceServiceImpl implements ResourceService {
         return response;
     }
 
-    public SongMetadataDto findSongMetadata(int resourceId) {
-        return repository.findById(resourceId)
-                .map(resource -> songService.findSongMetadata(resourceId))
-                .orElseThrow(() -> new ResourceNotFoundException("Resource with id = " + resourceId + " doesn't exist"));
-    }
-
-
     private void deleteResource(final Resource resource) {
+        StorageDto storage = storageServiceClient.findStorage(resource.getStorageId());
+        fileUploadService.deleteFile(resource.getLocation(), storage.getBucketName());
         repository.delete(resource);
-        fileUploadService.deleteFile(resource.getLocation());
     }
 
     private boolean validateIfMp3(final MultipartFile resource) {
         return MP3.toString().equalsIgnoreCase(FilenameUtils.getExtension(resource.getResource().getFilename()));
+    }
+
+    public Integer moveToPermanentStorage(Integer id) {
+        log.info("Moving resource with id: {} from staging to permanent storage", id);
+        Resource resource = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot find resource with id: " + id));
+        Integer permanentStorageId = fileUploadService.moveFileToPermanentStorage(resource.getLocation());
+        resource.setStorageId(permanentStorageId.toString());
+        repository.save(resource);
+        return resource.getId();
     }
 }

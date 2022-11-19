@@ -71,6 +71,7 @@ services:
       - localstack
       - rabbitmq
       - postgresql
+      - storage-service
 
   song-service:
     container_name: song-service
@@ -96,6 +97,7 @@ services:
       - eureka
       - rabbitmq
       - song-service
+      - resource-service
 
   storage-service:
     container_name: storage-service

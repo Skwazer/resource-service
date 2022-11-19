@@ -29,7 +29,9 @@ subprojects {
         testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 
         implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j'
         implementation platform('org.testcontainers:testcontainers-bom:1.17.5')
+        implementation 'io.github.resilience4j:resilience4j-spring-boot2'
 
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
@@ -48,9 +50,9 @@ subprojects {
         }
     }
 
-    tasks.named('test') {
-        useJUnitPlatform()
-    }
+//    tasks.named('test') {
+//        useJUnitPlatform()
+//    }
 }
 
 springBoot {

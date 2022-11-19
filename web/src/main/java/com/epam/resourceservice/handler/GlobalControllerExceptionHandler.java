@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.epam.resourceservice.exception.NotMp3FileException;
 import com.epam.resourceservice.exception.ResourceNotFoundException;
 import com.epam.resourceservice.exception.SongServiceException;
+import com.epam.resourceservice.exception.StorageNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
@@ -105,6 +106,17 @@ public class GlobalControllerExceptionHandler {
         error.setTimestamp(LocalDateTime.now());
         error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         error.setError(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+        error.setMessage(ex.getMessage());
+        return error;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(StorageNotFoundException.class)
+    public ErrorResponse handleStorageException(Exception ex) {
+        ErrorResponse error = new ErrorResponse();
+        error.setTimestamp(LocalDateTime.now());
+        error.setStatus(HttpStatus.NOT_FOUND.value());
+        error.setError(HttpStatus.NOT_FOUND.toString());
         error.setMessage(ex.getMessage());
         return error;
     }
