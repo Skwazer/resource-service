@@ -3,7 +3,6 @@ package com.epam.resourceservice.controller;
 import com.epam.resourceservice.dto.MultipleResourceDto;
 import com.epam.resourceservice.dto.Resource;
 import com.epam.resourceservice.service.database.ResourceServiceImpl;
-import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;

@@ -39,7 +39,61 @@ services:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
 
+  elasticsearch:
+    image: elasticsearch:7.12.0
+    container_name: 'elasticsearch'
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.enabled=false
+    volumes:
+      - es_data:/var/lib/elasticsearch/data
+    ports:
+      - target: 9200
+        published: 9200
+    networks:
+      - elastic
+
+  logstash:
+    image: logstash:7.12.0
+    container_name: 'logstash'
+    volumes:
+      - ./logstash/config/pipelines.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/config/pipelines:/usr/share/logstash/config/pipelines:ro
+      - shared-volume:/logs
+    ports:
+      - 5044:5044
+      - 50000:50000/tcp
+      - 50000:50000/udp
+      - 9600:9600
+    environment:
+      LS_JAVA_OPTS: -Xms256m -Xmx256m
+    networks:
+      - elastic
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: kibana:7.12.0
+    container_name: 'kibana'
+    ports:
+      - target: 5601
+        published: 5601
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic
+
   # local images
+  eureka:
+    image: eureka-service-img
+    container_name: eureka
+    build: ../eureka-service/
+    ports:
+      - "8761:8761"
+
   gateway:
     container_name: spring-gateway
     image: spring-gateway-img
@@ -51,17 +105,12 @@ services:
     depends_on:
       - eureka
 
-  eureka:
-    image: eureka-service-img
-    container_name: eureka
-    build: ../eureka-service/
-    ports:
-      - "8761:8761"
-
   resource-service:
     container_name: resource-service
     image: resource-service-img
     build: .
+    volumes:
+      - shared-volume:/logs
     ports:
       - "8087:8087"
     environment:
@@ -112,4 +161,14 @@ services:
       - localstack
       - postgresql
 
-  
+
+
+volumes:
+  es_data:
+    driver: local
+  shared-volume:
+
+networks:
+  elastic:
+    name: elastic
+    driver: bridge
